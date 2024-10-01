@@ -1,65 +1,63 @@
-// Function to create a promise that resolves after a random time between 1 and 3 seconds
-function createPromise(name) {
-	const time = (Math.random() * 2 + 1).toFixed(3);
-	return new Promise((resolve) => {
-		setTimeout(() => {
-			resolve({name, time});
-		}, time * 1000);
-	})
-  const time = (Math.random() * 2 + 1).toFixed(3); // Random time between 1 and 3 seconds
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({ name, time });
-    }, time * 1000);
-  });
+document.addEventListener("DOMContentLoaded", function() {
+// Helper function to create a promise that resolves after a random time between 1 and 3 seconds
+function createRandomPromise(index) {
+return new Promise((resolve) => {
+const startTime = Date.now();
+const delay = Math.floor(Math.random() * 2000) + 1000; // Random delay between 1000ms and 3000ms
+setTimeout(() => {
+const timeTaken = (Date.now() - startTime) / 1000; // Time taken in seconds
+resolve({ index, timeTaken });
+}, delay);
+});
 }
 
-// Adding the loading message
-const output = document.getElementById('output');
+// Create an array of 3 promises
+const promises = [createRandomPromise(1), createRandomPromise(2), createRandomPromise(3)];
 
-// Create three promises
-const promise1 = createPromise('Promise 1');
-const promise2 = createPromise('Promise 2');
-const promise3 = createPromise('Promise 3');
+// Start timing the total duration for all promises
+const startTotalTime = Date.now();
 
-// Record start time to calculate total duration
-const startTime = performance.now();
+    // Get the table element
+    const table = document.getElementById('promiseTable');
 
-// Using Promise.all to wait for all promises to resolve
-Promise.all([promise1, promise2, promise3]).then((results) => {
+    if (!table) {
+        console.error('Table with id "promiseTable" not found.');
+        return;
+    }
 
-	document.getElementById('loading').remove();
+    // Add a loading row
+    table.innerHTML = '<tr id="loading"><td colspan="2">Loading...</td></tr>';
 
-	const totalTime = ((performance.now() - startTime) / 1000).toFixed(3);
+// Wait for all promises to resolve using Promise.all
+Promise.all(promises).then(results => {
+const totalTime = (Date.now() - startTotalTime) / 1000; // Total time in seconds
 
-	results.forEach((result) => {
-		const row = document.createElement('tr');
-		row.innerHTML = `<td>${result.name}</td><td>${result.time}</td>`;
-		output.appendChild(row);
-	});
+        const table = document.getElementById('promiseTable');
 
-	const totalRow = document.createElement('tr');
-	totalRow.innerHTML = `<td>Total</td><td>${totalTime}</td>`;
-	output.appendChild(totalRow);
+        // Remove the loading row
+        table.innerHTML = '';
+        // Clear the loading row
+        const loadingRow = document.getElementById('loading');
+        if (loadingRow) {
+            loadingRow.remove();
+        }
+
+// Populate the table with the results
+results.forEach(result => {
+const row = table.insertRow();
+const cell1 = row.insertCell(0);
+const cell2 = row.insertCell(1);
+cell1.textContent = `Promise ${result.index}`;
+cell2.textContent = `${result.timeTaken.toFixed(3)} seconds`;
 });
-  // Check if the loading element exists before removing it
-  const loadingElement = document.getElementById('loading');
-  if (loadingElement) {
-    loadingElement.remove();
-  }
 
-  // Calculate total time
-  const totalTime = ((performance.now() - startTime) / 1000).toFixed(3);
-
-  // Populate the table with the results
-  results.forEach((result) => {
-    const row = document.createElement('tr');
-    row.innerHTML = `<td>${result.name}</td><td>${result.time}</td>`;
-    output.appendChild(row);
-  });
-
-  // Add the total time row
-  const totalRow = document.createElement('tr');
-  totalRow.innerHTML = `<td>Total</td><td>${totalTime}</td>`;
-  output.appendChild(totalRow);
+// Add the total time row
+const totalRow = table.insertRow();
+const cell1 = totalRow.insertCell(0);
+const cell2 = totalRow.insertCell(1);
+cell1.textContent = 'Total';
+cell2.textContent = `${totalTime.toFixed(3)} seconds`;
+    }).catch(error => {
+        console.error('Error handling promises:', error);
+});
 });
