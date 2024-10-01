@@ -1,63 +1,54 @@
-document.addEventListener("DOMContentLoaded", function() {
-// Helper function to create a promise that resolves after a random time between 1 and 3 seconds
-function createRandomPromise(index) {
-return new Promise((resolve) => {
-const startTime = Date.now();
-const delay = Math.floor(Math.random() * 2000) + 1000; // Random delay between 1000ms and 3000ms
-setTimeout(() => {
-const timeTaken = (Date.now() - startTime) / 1000; // Time taken in seconds
-resolve({ index, timeTaken });
-}, delay);
-});
+//your JS code here. If required.
+const pro1=()=>{
+	let time = Math.random() * 2000 + 1000;
+return new Promise((resolve,reject)=>{
+setTimeout(()=>{
+            resolve(['promise1',1002])
+        },1002)
+            resolve(['Promise 1',time])
+        },time)
+})
 }
 
-// Create an array of 3 promises
-const promises = [createRandomPromise(1), createRandomPromise(2), createRandomPromise(3)];
+const pro2=()=>{
+	let time = Math.random() * 2000 + 1000;
+return new Promise((resolve,reject)=>{
+setTimeout(()=>{
+            resolve(["promise2",2002])
+            resolve(["Promise 2",time])
+},2002)
+})
+}
 
-// Start timing the total duration for all promises
-const startTotalTime = Date.now();
 
-    // Get the table element
-    const table = document.getElementById('promiseTable');
-
-    if (!table) {
-        console.error('Table with id "promiseTable" not found.');
-        return;
-    }
-
-    // Add a loading row
-    table.innerHTML = '<tr id="loading"><td colspan="2">Loading...</td></tr>';
-
-// Wait for all promises to resolve using Promise.all
-Promise.all(promises).then(results => {
-const totalTime = (Date.now() - startTotalTime) / 1000; // Total time in seconds
-
-        const table = document.getElementById('promiseTable');
-
-        // Remove the loading row
-        table.innerHTML = '';
-        // Clear the loading row
-        const loadingRow = document.getElementById('loading');
-        if (loadingRow) {
-            loadingRow.remove();
-        }
-
-// Populate the table with the results
-results.forEach(result => {
-const row = table.insertRow();
-const cell1 = row.insertCell(0);
-const cell2 = row.insertCell(1);
-cell1.textContent = `Promise ${result.index}`;
-cell2.textContent = `${result.timeTaken.toFixed(3)} seconds`;
+const pro3=()=>{
+	let time = Math.random() * 2000 + 1000;
+return new Promise((resolve,reject)=>{
+setTimeout(()=>{
+            resolve(["promise3",2052])
+            resolve(["Promise 3",time])
+},2052)
+})
+}
+let body=document.getElementById("output");
+function solve(){
+let obj1=new Date();
+console.log(obj1);
+Promise.all([pro1(),pro2(),pro3()]).then((data)=>{
+console.log(data);
+let obj2=new Date();
+console.log(obj2);
+body.innerHTML="";
+data.forEach(element => {
+console.log(element);
+body.innerHTML+=`<tr>
+           <th>${element[0]}</th>
+           <th>${element[1]/1000}</th>
+       </tr>`
 });
-
-// Add the total time row
-const totalRow = table.insertRow();
-const cell1 = totalRow.insertCell(0);
-const cell2 = totalRow.insertCell(1);
-cell1.textContent = 'Total';
-cell2.textContent = `${totalTime.toFixed(3)} seconds`;
-    }).catch(error => {
-        console.error('Error handling promises:', error);
-});
-});
+body.innerHTML+=` <tr>
+       <th>Total</th>
+       <th>${(obj2-obj1)/1000}</th>
+   </tr>`
+})
+}
