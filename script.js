@@ -1,4 +1,3 @@
-@@ -1,33 +1,44 @@
 // Function to create a promise that resolves after a random time between 1 and 3 seconds
 function createPromise(name) {
 	const time = (Math.random() * 2 + 1).toFixed(3);
