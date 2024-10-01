@@ -1,54 +1,48 @@
 //your JS code here. If required.
-const pro1=()=>{
-	let time = Math.random() * 2000 + 1000;
-return new Promise((resolve,reject)=>{
-setTimeout(()=>{
-            resolve(['promise1',1002])
-        },1002)
-            resolve(['Promise 1',time])
-        },time)
-})
+function getRandomTime(min, max) {
+    return Math.random() * (max - min) + min;
 }
 
-const pro2=()=>{
-	let time = Math.random() * 2000 + 1000;
-return new Promise((resolve,reject)=>{
-setTimeout(()=>{
-            resolve(["promise2",2002])
-            resolve(["Promise 2",time])
-},2002)
-})
+// Function to create a promise that resolves after a random time between 1 and 3 seconds
+function createPromise(index) {
+    const time = getRandomTime(1, 3).toFixed(3); // Random time in seconds with 3 decimal places
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve({ promise: `Promise ${index + 1}`, time: time });
+        }, time * 1000); // Convert seconds to milliseconds
+    });
 }
 
+// Create 3 promises
+const promises = [createPromise(0), createPromise(1), createPromise(2)];
 
-const pro3=()=>{
-	let time = Math.random() * 2000 + 1000;
-return new Promise((resolve,reject)=>{
-setTimeout(()=>{
-            resolve(["promise3",2052])
-            resolve(["Promise 3",time])
-},2052)
-})
-}
-let body=document.getElementById("output");
-function solve(){
-let obj1=new Date();
-console.log(obj1);
-Promise.all([pro1(),pro2(),pro3()]).then((data)=>{
-console.log(data);
-let obj2=new Date();
-console.log(obj2);
-body.innerHTML="";
-data.forEach(element => {
-console.log(element);
-body.innerHTML+=`<tr>
-           <th>${element[0]}</th>
-           <th>${element[1]/1000}</th>
-       </tr>`
+// Store the start time
+const startTime = performance.now();
+
+// Add a row indicating loading state
+const table = document.getElementById('resultTable');
+
+// Wait for all promises to resolve
+Promise.all(promises).then((results) => {
+    // Remove the loading row
+    table.innerHTML = '';
+
+    // Populate the table with results
+    let totalTime = 0;
+    results.forEach((result, index) => {
+        totalTime += parseFloat(result.time);
+        const row = table.insertRow();
+        const cell1 = row.insertCell(0);
+        const cell2 = row.insertCell(1);
+        cell1.textContent = result.promise;
+        cell2.textContent = `${result.time} seconds`;
+    });
+
+    // Calculate the total time taken
+    const endTime = (performance.now() - startTime) / 1000; // Convert ms to seconds
+    const row = table.insertRow();
+    const cell1 = row.insertCell(0);
+    const cell2 = row.insertCell(1);
+    cell1.textContent = 'Total';
+    cell2.textContent = `${endTime.toFixed(3)} seconds`;
 });
-body.innerHTML+=` <tr>
-       <th>Total</th>
-       <th>${(obj2-obj1)/1000}</th>
-   </tr>`
-})
-}
